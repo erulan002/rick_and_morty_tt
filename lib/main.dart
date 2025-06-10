@@ -19,7 +19,16 @@ class MyApp extends StatelessWidget {
       create: (_) => CharactersBloc(
         repository: CharactersRepository(CharactersDataSource()),
       ),
-      child: MaterialApp(home: HomeScreen()),
+      child: MaterialApp(
+        home: HomeScreen(),
+        theme: ThemeData(
+          scaffoldBackgroundColor: Colors.green[100],
+          appBarTheme: AppBarTheme(color: Colors.blueGrey),
+          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+            backgroundColor: Colors.blueGrey,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -39,7 +48,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Rick and Morty')),
+      appBar: AppBar(
+        title: Text(
+          'Rick and Morty',
+          style: TextStyle(color: Colors.green[100]),
+        ),
+      ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -48,13 +62,18 @@ class _HomeScreenState extends State<HomeScreen> {
             _selectedIndex = index;
           });
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favourites',
+            icon: Icon(Icons.home, color: Colors.green[100], size: 30),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite, color: Colors.green[100], size: 30),
+            label: '',
           ),
         ],
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
       ),
     );
   }

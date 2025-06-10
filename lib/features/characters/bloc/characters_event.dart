@@ -1,9 +1,10 @@
 part of 'characters_bloc.dart';
 
-abstract class CharactersEvent {
-  const CharactersEvent();
-}
+abstract class CharactersEvent {}
 
-class LoadEvent extends CharactersEvent {
-  const LoadEvent();
+class LoadCharactersEvent extends CharactersEvent {}
+
+class ToggleFavoriteEvent extends CharactersEvent {
+  final Character character;
+  ToggleFavoriteEvent(this.character);
 }

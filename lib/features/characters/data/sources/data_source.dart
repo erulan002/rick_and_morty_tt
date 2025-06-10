@@ -6,7 +6,7 @@ import 'package:rick_and_morty_tt/features/characters/data/models/character.dart
 class CharactersDataSource {
   Future<List<Character>> getCharacters() async {
     try {
-      Response response = await Dio().post(
+      Response response = await Dio().get(
         "https://rickandmortyapi.com/api/character",
       );
 

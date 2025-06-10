@@ -6,27 +6,44 @@ part 'characters_event.dart';
 part 'characters_state.dart';
 
 class CharactersBloc extends Bloc<CharactersEvent, CharactersState> {
-  CharactersBloc({required CharactersRepository repository})
-    : _repository = repository,
-      super(InitialState()) {
-    on<CharactersEvent>(_onLoadCharactersEvent);
-  }
-
   final CharactersRepository _repository;
 
-  Future<void> _onLoadCharactersEvent(
-    CharactersEvent event,
+  CharactersBloc({required CharactersRepository repository})
+    : _repository = repository,
+      super(CharactersLoadingState()) {
+    on<LoadCharactersEvent>(_onLoadCharacters);
+    on<ToggleFavoriteEvent>(_onToggleFavorite);
+  }
+
+  Future<void> _onLoadCharacters(
+    LoadCharactersEvent event,
     Emitter<CharactersState> emit,
   ) async {
-    emit(LoadingState());
+    emit(CharactersLoadingState());
 
     try {
       final characters = await _repository.getCharacters();
-
-      emit(LoadedState(characters: characters));
-    } catch (error) {
-      emit(ErrorState(error.toString()));
-      rethrow;
+      emit(CharactersLoadedState(characters: characters));
+    } catch (e) {
+      emit(CharactersErrorState(e.toString()));
     }
+  }
+
+  void _onToggleFavorite(
+    ToggleFavoriteEvent event,
+    Emitter<CharactersState> emit,
+  ) {
+    if (state is! CharactersLoadedState) return;
+
+    final currentState = state as CharactersLoadedState;
+    final favorites = List<Character>.from(currentState.favorites);
+
+    if (favorites.any((c) => c.id == event.character.id)) {
+      favorites.removeWhere((c) => c.id == event.character.id);
+    } else {
+      favorites.add(event.character);
+    }
+
+    emit(currentState.copyWith(favorites: favorites));
   }
 }

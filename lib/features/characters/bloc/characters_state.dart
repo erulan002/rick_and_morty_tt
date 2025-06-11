@@ -7,18 +7,13 @@ class CharactersLoadingState extends CharactersState {}
 class CharactersLoadedState extends CharactersState {
   final List<Character> characters;
   final List<Character> favorites;
+  final bool hasMore;
 
-  CharactersLoadedState({required this.characters, this.favorites = const []});
-
-  CharactersLoadedState copyWith({
-    List<Character>? characters,
-    List<Character>? favorites,
-  }) {
-    return CharactersLoadedState(
-      characters: characters ?? this.characters,
-      favorites: favorites ?? this.favorites,
-    );
-  }
+  CharactersLoadedState({
+    required this.characters,
+    this.favorites = const [],
+    this.hasMore = true,
+  });
 }
 
 class CharactersErrorState extends CharactersState {

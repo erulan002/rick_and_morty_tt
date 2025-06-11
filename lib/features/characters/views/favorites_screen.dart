@@ -3,38 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rick_and_morty_tt/features/characters/bloc/characters_bloc.dart';
 import 'package:rick_and_morty_tt/features/characters/views/widgets/character_card.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class FavoritesScreen extends StatefulWidget {
+  const FavoritesScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<FavoritesScreen> createState() => _FavoritesScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
-  late final ScrollController _scrollController;
-
-  @override
-  void initState() {
-    super.initState();
-    context.read<CharactersBloc>().add(LoadCharactersEvent());
-
-    _scrollController = ScrollController()
-      ..addListener(() {
-        final max = _scrollController.position.maxScrollExtent;
-        final current = _scrollController.position.pixels;
-
-        if (current >= max - 200) {
-          context.read<CharactersBloc>().add(LoadMoreCharactersEvent());
-        }
-      });
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
+class _FavoritesScreenState extends State<FavoritesScreen> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -44,20 +20,23 @@ class _MainScreenState extends State<MainScreen> {
           if (state is CharactersLoadingState) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is CharactersLoadedState) {
-            final characters = state.characters;
+            final characters = state.favorites;
+            if (characters.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No Favotites Yet.',
+                  style: TextStyle(color: Colors.blueGrey, fontSize: 17),
+                ),
+              );
+            }
             return GridView.builder(
-              controller: _scrollController,
-              itemCount: characters.length + (state.hasMore ? 1 : 0),
+              itemCount: characters.length,
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 250,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
               itemBuilder: (context, index) {
-                if (index >= characters.length) {
-                  return Center(child: CircularProgressIndicator());
-                }
-
                 final character = characters[index];
                 final isFavorite = state.favorites.any(
                   (c) => c.id == character.id,
@@ -75,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
           } else if (state is CharactersErrorState) {
             return Center(child: Text(state.error));
           } else {
-            return const Offstage();
+            return Offstage();
           }
         },
       ),

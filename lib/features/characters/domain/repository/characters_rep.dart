@@ -6,7 +6,7 @@ class CharactersRepository {
 
   CharactersRepository(this.dataSource);
 
-  Future<List<Character>> getCharacters() async {
-    return await dataSource.getCharacters();
+  Future<List<Character>> getCharacters({int page = 1}) async {
+    return await dataSource.getCharacters(page: page);
   }
 }
